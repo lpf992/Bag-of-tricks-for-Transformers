@@ -7,6 +7,7 @@ from __future__ import annotations
 import copy
 import glob
 import io
+import json
 import math
 import os
 import random
@@ -42,6 +43,9 @@ class Hyperparameters:
     tokenizer_path = os.environ.get("TOKENIZER_PATH", "./data/tokenizers/fineweb_1024_bpe.model")
     run_id = os.environ.get("RUN_ID", str(uuid.uuid4()))
     output_dir = os.environ.get("OUTPUT_DIR", "logs")
+    experiment_name = os.environ.get("EXPERIMENT_NAME", run_id)
+    control_mode = os.environ.get("CONTROL_MODE", "single_run")
+    target_train_tokens = int(os.environ.get("TARGET_TRAIN_TOKENS", "0"))
     seed = int(os.environ.get("SEED", 1337))
 
     # Validation cadence and batch size. Validation always uses the full fineweb_val split.
@@ -789,8 +793,8 @@ def main() -> None:
 
     logfile = None
     if master_process:
-        os.makedirs(args.output_dir, exist_ok=True)
-        logfile = os.path.join(args.output_dir, f"{args.run_id}.txt")
+        os.makedirs(os.path.join(args.output_dir, "log"), exist_ok=True)
+        logfile = os.path.join(args.output_dir, "log", f"{args.run_id}.txt")
         print(logfile)
 
     def log0(msg: str, console: bool = True) -> None:
@@ -1192,6 +1196,8 @@ def main() -> None:
             },
             step=step,
         )
+    else:
+        model_path = os.path.join(args.output_dir, "final_model.pt")
 
     if distributed:
         dist.barrier()
@@ -1231,6 +1237,63 @@ def main() -> None:
         wandb_run.summary["peak_mem_allocated_mib"] = int(peak_mem_allocated_mib)
         wandb_run.summary["peak_mem_reserved_mib"] = int(peak_mem_reserved_mib)
         wandb_run.finish()
+
+    if master_process:
+        actual_train_tokens = int(step * args.train_batch_tokens)
+        stopped_early = stop_after_step is not None and step < args.iterations
+        metrics_payload = {
+            "version": 1,
+            "run_id": args.run_id,
+            "trainer": Path(__file__).name,
+            "experiment_name": args.experiment_name,
+            "hyperparameters": hyperparameters_to_dict(args),
+            "control": {
+                "mode": args.control_mode,
+                "target_train_tokens": args.target_train_tokens,
+                "actual_train_tokens": actual_train_tokens,
+                "target_wallclock_seconds": args.max_wallclock_seconds if args.control_mode == "fixed_compute" else 0.0,
+                "actual_wallclock_seconds": training_time_ms / 1000.0,
+                "stopped_early": stopped_early,
+            },
+            "model": {
+                "num_layers": args.num_layers,
+                "model_dim": args.model_dim,
+                "num_heads": args.num_heads,
+                "num_kv_heads": args.num_kv_heads,
+                "mlp_mult": args.mlp_mult,
+                "vocab_size": args.vocab_size,
+                "model_params": int(n_params),
+            },
+            "training": {
+                "iterations": args.iterations,
+                "train_batch_tokens": args.train_batch_tokens,
+                "train_seq_len": args.train_seq_len,
+                "world_size": world_size,
+                "grad_accum_steps": grad_accum_steps,
+                "max_wallclock_seconds": args.max_wallclock_seconds,
+                "final_step": int(step),
+                "training_time_ms": float(training_time_ms),
+            },
+            "metrics": {
+                "final_val_loss": float(final_val_loss),
+                "final_val_bpb": float(final_val_bpb),
+                "final_eval_time_ms": float(final_eval_time_ms),
+                "peak_mem_allocated_mib": int(peak_mem_allocated_mib),
+                "peak_mem_reserved_mib": int(peak_mem_reserved_mib),
+            },
+            "data": {
+                "data_path": args.data_path,
+                "tokenizer_path": args.tokenizer_path,
+                "train_shards": actual_train_files,
+            },
+            "artifacts": {
+                "model_path": str(model_path),
+                "log_path": logfile,
+            },
+        }
+        metrics_path = Path(args.output_dir) / "result.json"
+        metrics_path.write_text(json.dumps(metrics_payload, indent=2) + "\n", encoding="utf-8")
+        log0(f"Wrote final metrics to {metrics_path}")
 
     if distributed:
         dist.destroy_process_group()

@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "trainer_path": "exp/baseline-sp1024/train_gpt.py",
+  "launcher": {
+    "nproc_per_node": 8,
+    "master_port_base": 29500
+  },
+  "defaults": {
+    "data_path": "./data/datasets/fineweb10B_sp1024",
+    "tokenizer_path": "./data/tokenizers/fineweb_1024_bpe.model",
+    "vocab_size": 1024,
+    "train_batch_tokens": 524288,
+    "train_seq_len": 1024,
+    "warmup_steps": 20,
+    "warmdown_iters": 1200,
+    "enable_wandb": 1,
+    "wandb_mode": "online",
+    "wandb_project": "bag-of-tricks-for-transformers",
+    "num_layers": 9,
+    "model_dim": 512,
+    "num_heads": 8,
+    "num_kv_heads": 4,
+    "mlp_mult": 2
+  },
+  "experiments": [
+    {
+      "name": "baseline-sp1024-fixed_time_10min",
+      "trainer_path": "exp/baseline-sp1024/train_gpt.py",
+      "control": {
+        "mode": "fixed_compute",
+        "target_wallclock_seconds": 600,
+        "iterations_cap": 1000000
+      }
+    },
+    {
+      "name": "baseline-sp1024-fixed_tokens_10b",
+      "trainer_path": "exp/baseline-sp1024/train_gpt.py",
+      "control": {
+        "mode": "fixed_tokens",
+        "target_train_tokens": 10000000000
+      }
+    }
+  ]
+}
