@@ -25,3 +25,4 @@ final_model*.pt
 final_model*.ptz
 .cache
 wandb/
+core.*

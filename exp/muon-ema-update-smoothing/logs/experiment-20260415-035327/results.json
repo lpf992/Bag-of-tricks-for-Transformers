@@ -1,0 +1,95 @@
+{
+  "version": 2,
+  "kind": "experiment_batch",
+  "batch_id": "experiment-20260415-035327",
+  "manifest_path": "/inspire/hdd/global_user/lipengfei-253107010003/my-proj/bags_tricks/Bag-of-tricks-for-Transformers/exp/muon-ema-update-smoothing/muon-ema-update-smoothing.json",
+  "created_at": "2026-04-15T04:42:02",
+  "runs": [
+    {
+      "experiment_name": "muon-ema-update-smoothing-fixed_time_10min",
+      "variant_name": "muon-ema-update-smoothing",
+      "control_name": "fixed_compute",
+      "trainer_path": "/inspire/hdd/global_user/lipengfei-253107010003/my-proj/bags_tricks/Bag-of-tricks-for-Transformers/exp/muon-ema-update-smoothing/train_gpt.py",
+      "run_id": "experiment-20260415-035327-muon-ema-update-smoothing-fixed_time_10min",
+      "command": [
+        "torchrun",
+        "--standalone",
+        "--nproc_per_node=4",
+        "--master_port=29500",
+        "/inspire/hdd/global_user/lipengfei-253107010003/my-proj/bags_tricks/Bag-of-tricks-for-Transformers/exp/muon-ema-update-smoothing/train_gpt.py"
+      ],
+      "returncode": 1,
+      "result_json": "/inspire/hdd/global_user/lipengfei-253107010003/my-proj/bags_tricks/Bag-of-tricks-for-Transformers/exp/muon-ema-update-smoothing/logs/experiment-20260415-035327/muon-ema-update-smoothing-fixed_time_10min/result.json",
+      "resolved_control": {
+        "mode": "fixed_compute",
+        "target_train_tokens": 0,
+        "target_wallclock_seconds": 600.0,
+        "actual_train_tokens": null
+      },
+      "resolved_config": {
+        "data_path": "./data/datasets/fineweb10B_sp1024",
+        "tokenizer_path": "./data/tokenizers/fineweb_1024_bpe.model",
+        "vocab_size": 1024,
+        "train_batch_tokens": 524288,
+        "train_seq_len": 1024,
+        "warmup_steps": 20,
+        "warmdown_iters": 1200,
+        "enable_wandb": 1,
+        "wandb_mode": "online",
+        "wandb_project": "bag-of-tricks-for-transformers",
+        "num_layers": 9,
+        "model_dim": 512,
+        "num_heads": 8,
+        "num_kv_heads": 4,
+        "mlp_mult": 2,
+        "max_wallclock_seconds": 600.0,
+        "iterations": 1000000
+      },
+      "status": "failed",
+      "error": "Training exited with return code 1"
+    },
+    {
+      "experiment_name": "muon-ema-update-smoothing-fixed_tokens_10b",
+      "variant_name": "muon-ema-update-smoothing",
+      "control_name": "fixed_tokens",
+      "trainer_path": "/inspire/hdd/global_user/lipengfei-253107010003/my-proj/bags_tricks/Bag-of-tricks-for-Transformers/exp/muon-ema-update-smoothing/train_gpt.py",
+      "run_id": "experiment-20260415-035327-muon-ema-update-smoothing-fixed_tokens_10b",
+      "command": [
+        "torchrun",
+        "--standalone",
+        "--nproc_per_node=4",
+        "--master_port=29501",
+        "/inspire/hdd/global_user/lipengfei-253107010003/my-proj/bags_tricks/Bag-of-tricks-for-Transformers/exp/muon-ema-update-smoothing/train_gpt.py"
+      ],
+      "returncode": 1,
+      "result_json": "/inspire/hdd/global_user/lipengfei-253107010003/my-proj/bags_tricks/Bag-of-tricks-for-Transformers/exp/muon-ema-update-smoothing/logs/experiment-20260415-035327/muon-ema-update-smoothing-fixed_tokens_10b/result.json",
+      "resolved_control": {
+        "mode": "fixed_tokens",
+        "target_train_tokens": 10000000000,
+        "target_wallclock_seconds": 0.0,
+        "actual_train_tokens": 10000269312
+      },
+      "resolved_config": {
+        "data_path": "./data/datasets/fineweb10B_sp1024",
+        "tokenizer_path": "./data/tokenizers/fineweb_1024_bpe.model",
+        "vocab_size": 1024,
+        "train_batch_tokens": 524288,
+        "train_seq_len": 1024,
+        "warmup_steps": 20,
+        "warmdown_iters": 1200,
+        "enable_wandb": 1,
+        "wandb_mode": "online",
+        "wandb_project": "bag-of-tricks-for-transformers",
+        "num_layers": 9,
+        "model_dim": 512,
+        "num_heads": 8,
+        "num_kv_heads": 4,
+        "mlp_mult": 2,
+        "iterations": 19074,
+        "max_wallclock_seconds": 0.0
+      },
+      "status": "failed",
+      "error": "Training exited with return code 1"
+    }
+  ]
+}
