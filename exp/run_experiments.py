@@ -59,6 +59,7 @@ ENV_KEY_MAP = {
     "wandb_mode": "WANDB_MODE",
     "wandb_dir": "WANDB_DIR",
     "wandb_upload_artifacts": "WANDB_UPLOAD_ARTIFACTS",
+    "wandb_api_key": "WANDB_API_KEY",
 }
 
 MODEL_KEYS = ("num_layers", "model_dim", "num_heads", "num_kv_heads", "mlp_mult", "vocab_size")
@@ -329,8 +330,6 @@ def build_run_config(
     master_port = master_port_base + experiment_index
 
     command = [
-        "uv",
-        "run",
         "torchrun",
         "--standalone",
         f"--nproc_per_node={nproc_per_node}",
