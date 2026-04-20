@@ -34,6 +34,8 @@ ENV_KEY_MAP = {
     "mlp_mult": "MLP_MULT",
     "tie_embeddings": "TIE_EMBEDDINGS",
     "rope_base": "ROPE_BASE",
+    # trick: partial-rope — rotate only first N head dims (parameter-golf 1.1248)
+    "rope_dims": "ROPE_DIMS",
     "logit_softcap": "LOGIT_SOFTCAP",
     "embed_lr": "EMBED_LR",
     "head_lr": "HEAD_LR",
@@ -45,6 +47,12 @@ ENV_KEY_MAP = {
     "muon_backend_steps": "MUON_BACKEND_STEPS",
     "muon_momentum_warmup_start": "MUON_MOMENTUM_WARMUP_START",
     "muon_momentum_warmup_steps": "MUON_MOMENTUM_WARMUP_STEPS",
+    # trick: snoo — Sparse Nesterov Outer Optimizer (modded-nanogpt PR #128)
+    "snoo_enabled": "SNOO_ENABLED",
+    "snoo_scope": "SNOO_SCOPE",
+    "snoo_lr": "SNOO_LR",
+    "snoo_momentum": "SNOO_MOMENTUM",
+    "snoo_k": "SNOO_K",
     "beta1": "BETA1",
     "beta2": "BETA2",
     "adam_eps": "ADAM_EPS",

@@ -11,6 +11,7 @@ __pycache__/
 .DS_Store
 modded-nanogpt/
 modded-nanogpt
+data/*
 data/datasets
 data/manifest.json
 data/docs_selected.jsonl
@@ -26,3 +27,4 @@ final_model*.ptz
 .cache
 wandb/
 core.*
+**/logs/
